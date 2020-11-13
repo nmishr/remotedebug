@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: nmishrpipelinesjavascriptdocker 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nmishrpipelinesjavascriptdocker
+  template:
+    metadata:
+      labels:
+        app: nmishrpipelinesjavascriptdocker 
+    spec:
+      containers:
+        - name: nmishrpipelinesjavascriptdocker 
+          image: nvmcontainerreg.azurecr.io/nmishrpipelinesjavascriptdocker
+          ports:
+          - containerPort: 8080
