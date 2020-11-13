@@ -8,6 +8,8 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "applicationinsights": "^1.8.8",
+    "applicationinsights-native-metrics": "0.0.5",
     "express": "^4.16.4"
   }
 }
