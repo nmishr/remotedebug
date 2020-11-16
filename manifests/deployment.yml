@@ -19,7 +19,7 @@ spec:
           - containerPort: 8080
           - containerPort: 8080
 ---
-apiVersion : apps/v1
+apiVersion : batch/v1beta1
 kind: CronJob
 metadata:
   name: nmishrpipelinesjavascriptdocker 
@@ -42,7 +42,7 @@ spec:
               ports:
               - containerPort: 8080
 ---
-apiVersion : apps/v1
+apiVersion : batch/v1beta1
 kind: CronJob
 metadata:
   name: nmishrpipelinesjavascriptdocker 
