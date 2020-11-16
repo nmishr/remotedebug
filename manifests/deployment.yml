@@ -17,4 +17,26 @@ spec:
           image: nvmcontainerreg.azurecr.io/nmishrpipelinesjavascriptdocker
           ports:
           - containerPort: 8080
-          - containerPort: 8080
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "15 16 * * *"
+  jobTemplate:
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: nmishrpipelinesjavascriptdocker
+      template:
+        metadata:
+          labels:
+            app: nmishrpipelinesjavascriptdocker 
+        spec:
+          containers:
+            - name: nmishrpipelinesjavascriptdocker 
+              image: nvmcontainerreg.azurecr.io/nmishrpipelinesjavascriptdocker
+              ports:
+              - containerPort: 8080
