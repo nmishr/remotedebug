@@ -8,7 +8,7 @@ appInsights.setup('c1805768-a77c-48ba-b424-c992f24bc7dc')
   .setAutoCollectDependencies(true)
   .setAutoCollectConsole(true)
   .setUseDiskRetryCaching(true)
-  .setSendLiveMetrics(false)
+  .setSendLiveMetrics(true)
   .setDistributedTracingMode(appInsights.DistributedTracingModes.AI)
   .start();
 
