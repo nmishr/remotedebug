@@ -15,7 +15,7 @@ appInsights.setup('c1805768-a77c-48ba-b424-c992f24bc7dc')
 let client = appInsights.defaultClient;
 const express = require('express');
 
-const PORT = 8080;
+const PORT = 8081;
 const HOST = '0.0.0.0';
 
 const app = express();
