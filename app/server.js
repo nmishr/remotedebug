@@ -12,18 +12,78 @@ appInsights.setup('c1805768-a77c-48ba-b424-c992f24bc7dc')
   .setDistributedTracingMode(appInsights.DistributedTracingModes.AI)
   .start();
 
-let client = appInsights.defaultClient;
+  const config = {
+    endpoint: "https://nvm-cosmos.documents.azure.com:443/",
+    key: "qzattpyaQA1ld8P2JY5fdIcbMWLdjY1mDh0ixkcY4eUzXUe4bXc5Bx4mKUnBZB7wrVyjlEeG6IdGTsbbcVn3ZA==",
+    databaseId: "Tasks",
+    containerId: "Items",
+    partitionKey: { kind: "Hash", paths: ["/category"] }
+  };
+
+let telemClient = appInsights.defaultClient;
 const express = require('express');
+
+const CosmosClient = require("@azure/cosmos").CosmosClient;
+const { endpoint, key, databaseId, containerId } = config;
+
+const cosmosClient = new CosmosClient({ endpoint, key });
+const database = cosmosClient.database(databaseId);
+const container = database.container(containerId);
 
 const PORT = 8081;
 const HOST = '0.0.0.0';
 
+
 const app = express();
+// query to return all items
+const querySpec = {
+  query: "SELECT * from c"
+};
+
 app.get('/', (req, res) => {
-  res.send('Hello world\n');
-  client.trackEvent({ name: "CustomMessage 1", properties: { foo: "Bar" } });
-  client.flush();
+  
+  
+  const afunc = async() => {
+    const { resources: items } = await container.items.query(querySpec).fetchAll();  
+    items.forEach(item => {console.log(`${item.id} - ${item.description}`)  }  )
+  }
+  
+  afunc().then(  res.send('Hello world\n') );
+  telemClient.trackEvent({ name: "CustomMessage 1", properties: { foo: "Bar" } });
+  telemClient.flush();
 });
+
+// Make sure Tasks database is already setup. If not, create it.
+create(cosmosClient, databaseId, containerId);
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
+
+
+/*
+// This script ensures that the database is setup and populated correctly
+*/
+async function create(client, databaseId, containerId) {
+  const partitionKey = config.partitionKey;
+
+  /**
+   * Create the database if it does not exist
+   */
+  const { database } = await client.databases.createIfNotExists({ id: databaseId  });
+  console.log(`Created database:\n${database.id}\n`);
+
+  /**
+   * Create the container if it does not exist
+   */
+  const { container } = await client.database(databaseId).containers.createIfNotExists(
+      { id: containerId, partitionKey },
+      { offerThroughput: 400 }
+    );
+
+  console.log(`Created container:\n${container.id}\n`);
+
+  const { resources: items } = await container.items.query(querySpec).fetchAll();
+      
+  items.forEach(item => {console.log(`${item.id} - ${item.description}`)  }  )
+
+}
