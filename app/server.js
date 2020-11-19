@@ -40,15 +40,14 @@ const querySpec = {
   query: "SELECT * from c"
 };
 
-app.get('/', (req, res) => {
+app.get('/', async function(req, res) {
   
-  
-  const afunc = async() => {
-    const { resources: items } = await container.items.query(querySpec).fetchAll();  
-    items.forEach(item => {console.log(`${item.id} - ${item.description}`)  }  )
-  }
-  
-  afunc().then(  res.send('Hello world\n') );
+  var results = [];
+  const { resources: items } = await container.items.query(querySpec).fetchAll();  
+
+  items.forEach( item => {results.push( `${item.id} - ${item.description}`)}  )
+     
+  res.send(`<html><body><b>Hello World:</b><hr><ul><li> ${results.join("</li>\n<li>")} </li></ul></body></html>`);
   telemClient.trackEvent({ name: "CustomMessage 1", properties: { foo: "Bar" } });
   telemClient.flush();
 });
